@@ -123,14 +123,19 @@ public class AddBoxActivity extends AppCompatActivity {
                     {
                         Uri downloadUri = task.getResult();
 
-                        Upload upload = new Upload(fileNameET.getText().toString().trim(),
-                                downloadUri.toString());
 
-                        databaseReference.push().setValue(upload);
+                        String uploadId = databaseReference.push().getKey();
+                        Upload upload = new Upload(uploadId,fileNameET.getText().toString().trim(),
+                                downloadUri.toString());
+                        databaseReference.child(uploadId).setValue(upload);
                         Toast.makeText(AddBoxActivity.this,"Upload successful",Toast.LENGTH_SHORT).show();
+                        //starts QRImageActivity with uri intent
+                        Intent intent = new Intent(AddBoxActivity.this,QRImageActivity.class);
+                        intent.putExtra("uri",downloadUri.toString());//TODO send upload id so that you can access everything or use bundle
+                        startActivity(intent);
                     } else
                     {
-                        Toast.makeText(AddBoxActivity.this, "upload failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AddBoxActivity.this, "upload failed: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                     }
                 }
             });

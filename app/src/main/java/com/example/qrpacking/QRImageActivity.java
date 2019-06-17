@@ -9,5 +9,9 @@ public class QRImageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qrimage);
+
+        String uri =getIntent().getStringExtra("uri");
+
+
     }
 }
