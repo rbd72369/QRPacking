@@ -1,13 +1,33 @@
 package com.example.qrpacking;
 
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
+
+import com.google.android.gms.auth.api.signin.internal.Storage;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.net.URI;
 
@@ -18,9 +38,12 @@ public class AddBoxActivity extends AppCompatActivity {
     private Button chooseImageBtn;
     private Button uploadBtn;
     private ImageView imageView;
+    private EditText fileNameET;
 
     private Uri imageURI;
 
+    private StorageReference storageReference;
+    private DatabaseReference databaseReference;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,7 +52,10 @@ public class AddBoxActivity extends AppCompatActivity {
         chooseImageBtn = findViewById(R.id.chooseImageBtn);
         uploadBtn = findViewById(R.id.uploadBtn);
         imageView = findViewById(R.id.imageView);
+        fileNameET = findViewById(R.id.fileNameET);
 
+        storageReference = FirebaseStorage.getInstance().getReference("uploads");
+        databaseReference = FirebaseDatabase.getInstance().getReference("uploads");
         chooseImageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -40,7 +66,7 @@ public class AddBoxActivity extends AppCompatActivity {
         uploadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                uploadFile();
             }
         });
 
@@ -63,5 +89,76 @@ public class AddBoxActivity extends AppCompatActivity {
 
             imageView.setImageURI(imageURI);
         }
+    }
+
+    private String getFileExtension(Uri uri){
+        ContentResolver contentResolver = getContentResolver();
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        return  mime.getExtensionFromMimeType(contentResolver.getType(uri));
+    }
+
+    public void uploadFile(){
+        final StorageReference fileRef = storageReference.child(System.currentTimeMillis()
+                + "." + getFileExtension(imageURI));
+        if (imageURI != null)
+        {
+            fileRef.putFile(imageURI).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>()
+            {
+                @Override
+                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception
+                {
+                    if (!task.isSuccessful())
+                    {
+                        throw task.getException();
+                    }
+                    Toast.makeText(AddBoxActivity.this,"THis workds",Toast.LENGTH_LONG).show();
+                    return fileRef.getDownloadUrl();
+                }
+            }).addOnCompleteListener(new OnCompleteListener<Uri>()
+            {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task)
+                {
+                    if (task.isSuccessful())
+                    {
+                        Uri downloadUri = task.getResult();
+
+                        Upload upload = new Upload(fileNameET.getText().toString().trim(),
+                                downloadUri.toString());
+
+                        databaseReference.push().setValue(upload);
+                        Toast.makeText(AddBoxActivity.this,"Upload successful",Toast.LENGTH_SHORT).show();
+                    } else
+                    {
+                        Toast.makeText(AddBoxActivity.this, "upload failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
+
+        /* if(imageURI != null){
+            StorageReference fileRef = storageReference.child(System.currentTimeMillis()
+                + "." + getFileExtension(imageURI));
+            fileRef.putFile(imageURI)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            Toast.makeText(AddBoxActivity.this,"Upload successful",Toast.LENGTH_SHORT).show();
+                            Upload upload = new Upload(fileNameET.getText().toString().trim(),
+                                    taskSnapshot.getStorage().getDownloadUrl().toString());
+                            String uploadId = databaseReference.push().getKey();
+                            databaseReference.child(uploadId).setValue(upload);
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(AddBoxActivity.this,e.getMessage(),Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        }
+        else{
+            Toast.makeText(this,"no file selected", Toast.LENGTH_SHORT).show();
+        }*/
     }
 }
