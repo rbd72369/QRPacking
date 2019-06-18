@@ -24,7 +24,8 @@ import androidmads.library.qrgenearator.QRGSaver;
 public class QRImageActivity extends AppCompatActivity {
 
     String TAG = "GenerateQRCode";
-    EditText edtValue;
+    String name;
+    String uri;
     ImageView qrImage;
     Button start, save;
     String inputValue;
@@ -39,8 +40,8 @@ public class QRImageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qrimage);
         Bundle bundle = getIntent().getExtras();
-        final String uri = bundle.getString("uri");
-        String name = bundle.getString("name");
+        uri = bundle.getString("uri");
+        name = bundle.getString("name");
 
         qrImage = (ImageView) findViewById(R.id.QR_Image);
         //edtValue = (EditText) findViewById(R.id.edt_value);
@@ -71,7 +72,7 @@ public class QRImageActivity extends AppCompatActivity {
                 Log.v(TAG, e.toString());
             }
         } else {
-            edtValue.setError("Required");
+            Toast.makeText(QRImageActivity.this,"WRONG",Toast.LENGTH_SHORT).show();
         }
 /*
         start.setOnClickListener(new View.OnClickListener() {
@@ -88,7 +89,7 @@ public class QRImageActivity extends AppCompatActivity {
                 boolean save;
                 String result;
                 try {
-                    save = QRGSaver.save(savePath, edtValue.getText().toString().trim(), bitmap, QRGContents.ImageType.IMAGE_JPEG);
+                    save = QRGSaver.save(savePath, name, bitmap, QRGContents.ImageType.IMAGE_JPEG);
                     result = save ? "Image Saved" : "Image Not Saved";
                     Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
                 } catch (Exception e) {

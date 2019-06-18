@@ -119,7 +119,7 @@ public class AddBoxActivity extends AppCompatActivity {
                     {
                         throw task.getException();
                     }
-                    Toast.makeText(AddBoxActivity.this,"THis workds",Toast.LENGTH_LONG).show();
+
                     return fileRef.getDownloadUrl();
                 }
             }).addOnCompleteListener(new OnCompleteListener<Uri>()
