@@ -44,8 +44,6 @@ public class QRImageActivity extends AppCompatActivity {
     ImageView qrImage;
     Button printBtn, save;
     String inputValue;
-    String savePath = "/sdcard/DCIM/QRCode/";
-    //String savePath = Environment.getExternalStorageDirectory().toString();
     Bitmap bitmap;
     QRGEncoder qrgEncoder;
 
@@ -64,8 +62,6 @@ public class QRImageActivity extends AppCompatActivity {
         save = (Button) findViewById(R.id.save);
         nameTV = findViewById((R.id.nameTV));
         printBtn = findViewById(R.id.printBtn);
-
-
 
         inputValue = uri;
         if (inputValue.length() > 0) {
@@ -92,15 +88,7 @@ public class QRImageActivity extends AppCompatActivity {
         } else {
             Toast.makeText(QRImageActivity.this,"WRONG",Toast.LENGTH_SHORT).show();
         }
-/*
-        start.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //inputValue = edtValue.getText().toString().trim();
 
-            }
-        });
-*/
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -158,8 +146,6 @@ public class QRImageActivity extends AppCompatActivity {
                                     Log.i("ExternalStorage", "-> uri=" + uri);
                                 }
                             });
-
-
 
                     /*
                     //String path = Environment.getExternalStorageDirectory().toString();

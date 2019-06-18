@@ -31,5 +31,6 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
     implementation 'androidmads.library.qrgenearator:QRGenearator:1.0.3'
+    implementation 'com.itextpdf:itextg:5.5.10'
 
 }
