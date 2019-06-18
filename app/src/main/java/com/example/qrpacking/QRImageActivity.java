@@ -1,8 +1,11 @@
 package com.example.qrpacking;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.os.Environment;
+import android.provider.MediaStore;
+import android.support.v4.print.PrintHelper;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,6 +20,10 @@ import android.widget.Toast;
 
 import com.google.zxing.WriterException;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+
 import androidmads.library.qrgenearator.QRGContents;
 import androidmads.library.qrgenearator.QRGEncoder;
 import androidmads.library.qrgenearator.QRGSaver;
@@ -27,9 +34,10 @@ public class QRImageActivity extends AppCompatActivity {
     String name;
     String uri;
     ImageView qrImage;
-    Button start, save;
+    Button printBtn, save;
     String inputValue;
-    String savePath = Environment.getExternalStorageDirectory().getPath() + "/QRCode/";
+    //String savePath = Environment.getExternalStorageDirectory().toString() + "/QRCode/";
+    //String savePath = Environment.getExternalStorageDirectory().toString();
     Bitmap bitmap;
     QRGEncoder qrgEncoder;
 
@@ -48,6 +56,7 @@ public class QRImageActivity extends AppCompatActivity {
         //start = (Button) findViewById(R.id.start);
         save = (Button) findViewById(R.id.save);
         nameTV = findViewById((R.id.nameTV));
+        printBtn = findViewById(R.id.printBtn);
 
         inputValue = uri;
         if (inputValue.length() > 0) {
@@ -89,12 +98,39 @@ public class QRImageActivity extends AppCompatActivity {
                 boolean save;
                 String result;
                 try {
-                    save = QRGSaver.save(savePath, name, bitmap, QRGContents.ImageType.IMAGE_JPEG);
+
+                    //String path = Environment.getExternalStorageDirectory().toString();
+                    OutputStream fOut = null;
+                    File file = new File( Environment.getExternalStoragePublicDirectory(
+                            Environment.DIRECTORY_DCIM), "Camera");
+                    //File file = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), name+".jpg"); // the File to save , append increasing numeric counter to prevent files from getting overwritten.
+                    fOut = new FileOutputStream(file);
+
+
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fOut); // saving the Bitmap to a file compressed as a JPEG with 85% compression rate
+                    fOut.flush(); // Not really required
+                    fOut.close(); // do not forget to close the stream
+
+                    MediaStore.Images.Media.insertImage(getContentResolver(),file.getAbsolutePath(),file.getName(),file.getName());
+
+
+                    /*save = QRGSaver.save(savePath, name, bitmap, QRGContents.ImageType.IMAGE_JPEG);
                     result = save ? "Image Saved" : "Image Not Saved";
-                    Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();*/
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+            }
+        });
+
+        printBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PrintHelper photoPrinter = new PrintHelper(QRImageActivity.this);
+
+                //Bitmap resized = Bitmap.createScaledBitmap(bitmap, (int)(bitmap.getWidth()*.1),(int)(bitmap.getHeight()*.1), true);
+                photoPrinter.setScaleMode(PrintHelper.SCALE_MODE_FIT);
+                photoPrinter.printBitmap("qr code", bitmap);
             }
         });
 
