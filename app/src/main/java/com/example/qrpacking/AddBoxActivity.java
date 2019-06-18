@@ -98,8 +98,16 @@ public class AddBoxActivity extends AppCompatActivity {
     }
 
     public void uploadFile(){
+        String imageName;
+        if(fileNameET.getText().toString().trim().equals("")){
+            imageName = "No Name";
+        }
+        else imageName = fileNameET.getText().toString().trim();
+        String imageEndText = imageName.replaceAll(" ", "_");
+
+        final String imgName = imageName;
         final StorageReference fileRef = storageReference.child(System.currentTimeMillis()
-                + "." + getFileExtension(imageURI));
+                +imageEndText +"." + getFileExtension(imageURI));
         if (imageURI != null)
         {
             fileRef.putFile(imageURI).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>()
@@ -125,13 +133,16 @@ public class AddBoxActivity extends AppCompatActivity {
 
 
                         String uploadId = databaseReference.push().getKey();
-                        Upload upload = new Upload(uploadId,fileNameET.getText().toString().trim(),
+                        Upload upload = new Upload(uploadId,imgName,
                                 downloadUri.toString());
                         databaseReference.child(uploadId).setValue(upload);
                         Toast.makeText(AddBoxActivity.this,"Upload successful",Toast.LENGTH_SHORT).show();
                         //starts QRImageActivity with uri intent
                         Intent intent = new Intent(AddBoxActivity.this,QRImageActivity.class);
-                        intent.putExtra("uri",downloadUri.toString());//TODO send upload id so that you can access everything or use bundle
+                        Bundle bundle = new Bundle();
+                        bundle.putString("uri", downloadUri.toString());
+                        bundle.putString("name", upload.getName());
+                        intent.putExtras(bundle);
                         startActivity(intent);
                     } else
                     {

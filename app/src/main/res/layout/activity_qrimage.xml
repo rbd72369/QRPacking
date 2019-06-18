@@ -8,37 +8,30 @@
     android:padding="16dp"
     tools:context=".MainActivity">
 
-    <EditText
-        android:id="@+id/edt_value"
+
+    <TextView
+        android:id="@+id/nameTV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter Text" />
+        android:textSize="30sp"
+        android:gravity="center"
+        android:layout_marginBottom="10dp"
+        android:textColor="@android:color/black"
+        />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:orientation="horizontal">
 
-        <Button
-            android:layout_weight="1"
-            android:id="@+id/start"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="Generate" />
-
-        <Button
-            android:layout_weight="1"
-            android:id="@+id/save"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="Save" />
-    </LinearLayout>
 
     <ImageView
         android:id="@+id/QR_Image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@string/app_name" />
+
+    <Button
+        android:layout_weight="1"
+        android:id="@+id/save"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Save" />
 
 </LinearLayout>
