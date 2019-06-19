@@ -191,6 +191,9 @@ public class AddBoxActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
+            case R.id.uploads:
+                startActivity(new Intent(this, UploadsActivity.class));
+                return true;
             case R.id.logout:
                 FirebaseAuth.getInstance().signOut();
                 startActivity(new Intent(this, MainActivity.class));
