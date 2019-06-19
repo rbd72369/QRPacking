@@ -4,7 +4,12 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.Rect;
+import android.graphics.pdf.PdfDocument;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Environment;
@@ -29,6 +34,7 @@ import com.google.zxing.WriterException;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Random;
 
@@ -42,7 +48,7 @@ public class QRImageActivity extends AppCompatActivity {
     String name;
     String uri;
     ImageView qrImage;
-    Button printBtn, save;
+    Button printBtn, save, pdfBtn;
     String inputValue;
     Bitmap bitmap;
     QRGEncoder qrgEncoder;
@@ -62,6 +68,7 @@ public class QRImageActivity extends AppCompatActivity {
         save = (Button) findViewById(R.id.save);
         nameTV = findViewById((R.id.nameTV));
         printBtn = findViewById(R.id.printBtn);
+        pdfBtn = findViewById(R.id.pdfBtn);
 
         inputValue = uri;
         if (inputValue.length() > 0) {
@@ -188,7 +195,55 @@ public class QRImageActivity extends AppCompatActivity {
             }
         });
 
+        pdfBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createPdf(System.currentTimeMillis() + underscoreName);
+            }
+        });
 
+    }
+    private void createPdf(String sometext){
+        // create a new document
+        PdfDocument document = new PdfDocument();
+        // crate a page description
+        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(595, 842, 1).create();
+        // start a page
+        PdfDocument.Page page = document.startPage(pageInfo);
+        Canvas canvas = page.getCanvas();
+        Paint paint = new Paint();
+/*
+        Paint myPaint = new Paint();
+        myPaint.setColor(Color.rgb(0, 0, 0));
+        myPaint.setStrokeWidth(10);
+        canvas.drawRect(100, 100, 200, 200, myPaint);
+        */
+        Rect rect = new Rect(50,50,200,200);
+        canvas.drawBitmap(bitmap,null,rect,null);
+        paint.setColor(Color.BLACK);
+        paint.setTextSize(20);
+        int xPos = (int)(rect.width() - paint.getTextSize() * name.length() / 2) / 2;
+        canvas.drawText(name, xPos, 35, paint);
 
+        // finish the page
+        document.finishPage(page);
+// draw text on the graphics object of the page
+        // write the document content
+        String directory_path = Environment.getExternalStorageDirectory().getPath() + "/mypdf/";
+        File file = new File(directory_path);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+        String targetPdf = directory_path+ sometext+"_qr"+".pdf";
+        File filePath = new File(targetPdf);
+        try {
+            document.writeTo(new FileOutputStream(filePath));
+            Toast.makeText(this, "Done", Toast.LENGTH_LONG).show();
+        } catch (IOException e) {
+            Log.e("main", "error "+e.toString());
+            Toast.makeText(this, "Something wrong: " + e.toString(),  Toast.LENGTH_LONG).show();
+        }
+        // close the document
+        document.close();
     }
 }
