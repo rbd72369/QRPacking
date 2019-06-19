@@ -46,6 +46,7 @@ public class UploadsRecyclerAdapter extends RecyclerView.Adapter<UploadsRecycler
         Glide.with(context)
                 .load(uploadCurrent.getImageUrl())
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .fitCenter()
                 .into(imageViewHolder.imageView);
     }
 

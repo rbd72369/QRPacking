@@ -7,6 +7,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -23,6 +24,8 @@ public class UploadsActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private UploadsRecyclerAdapter uploadsRecyclerAdapter;
 
+    private ProgressBar progressCircle;
+
     private DatabaseReference databaseReference;
     private List<Upload> uploadsList;
     @Override
@@ -36,6 +39,7 @@ public class UploadsActivity extends AppCompatActivity {
         recyclerView.setItemViewCacheSize(20);
         recyclerView.setDrawingCacheEnabled(true);
 
+        progressCircle = findViewById(R.id.progressCirc);
 
         uploadsList = new ArrayList<>();
 
@@ -52,11 +56,13 @@ public class UploadsActivity extends AppCompatActivity {
 
                 uploadsRecyclerAdapter = new UploadsRecyclerAdapter(UploadsActivity.this, uploadsList);
                 recyclerView.setAdapter(uploadsRecyclerAdapter);
+                progressCircle.setVisibility(View.INVISIBLE);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Toast.makeText(UploadsActivity.this, databaseError.getMessage(), Toast.LENGTH_LONG).show();
+                progressCircle.setVisibility(View.INVISIBLE);
             }
         });
 
