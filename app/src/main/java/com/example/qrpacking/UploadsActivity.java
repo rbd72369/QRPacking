@@ -7,6 +7,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -25,6 +26,8 @@ public class UploadsActivity extends AppCompatActivity {
     private UploadsRecyclerAdapter uploadsRecyclerAdapter;
 
     private ProgressBar progressCircle;
+    private Button pdfButton;
+    private List<QrCode> qrCodeList;
 
     private DatabaseReference databaseReference;
     private List<Upload> uploadsList;
@@ -38,10 +41,11 @@ public class UploadsActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         //TODO check if this shit does anything
-        recyclerView.setItemViewCacheSize(20);
-        recyclerView.setDrawingCacheEnabled(true);
+        //recyclerView.setItemViewCacheSize(20);
+        //recyclerView.setDrawingCacheEnabled(true);
 
         progressCircle = findViewById(R.id.progressCirc);
+        pdfButton = findViewById(R.id.pdf);
 
         uploadsList = new ArrayList<>();
 
@@ -67,6 +71,15 @@ public class UploadsActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Toast.makeText(UploadsActivity.this, databaseError.getMessage(), Toast.LENGTH_LONG).show();
                 progressCircle.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        pdfButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               qrCodeList = uploadsRecyclerAdapter.getQrCodeList();
+               Pdf pdf = new Pdf(qrCodeList);
+               pdf.createPdf();
             }
         });
 
