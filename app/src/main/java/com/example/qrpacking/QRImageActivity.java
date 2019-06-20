@@ -31,6 +31,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.zxing.WriterException;
+import com.google.zxing.qrcode.encoder.QRCode;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -46,21 +47,22 @@ public class QRImageActivity extends AppCompatActivity {
 
     String TAG = "GenerateQRCode";
     String name;
-    String uri;
+
     ImageView qrImage;
     Button printBtn, save, pdfBtn;
-    String inputValue;
-    Bitmap bitmap;
+    Bitmap mainBitmap;
     QRGEncoder qrgEncoder;
 
     TextView nameTV;
+
+    //TODO add progress bar for upload
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qrimage);
         Bundle bundle = getIntent().getExtras();
-        uri = bundle.getString("uri");
+        String uri = bundle.getString("uri");
         name = bundle.getString("name");
         final String underscoreName = name.replaceAll(" ", "_");
 
@@ -70,7 +72,13 @@ public class QRImageActivity extends AppCompatActivity {
         printBtn = findViewById(R.id.printBtn);
         pdfBtn = findViewById(R.id.pdfBtn);
 
-        inputValue = uri;
+
+        //mainBitmap = makeQRCode(uri);
+        QrCode qrCode = new QrCode(name,uri,this);
+        mainBitmap = qrCode.getQrImage();
+        nameTV.setText(name);
+        qrImage.setImageBitmap(mainBitmap);
+        /*
         if (inputValue.length() > 0) {
             WindowManager manager = (WindowManager) getSystemService(WINDOW_SERVICE);
             Display display = manager.getDefaultDisplay();
@@ -88,14 +96,14 @@ public class QRImageActivity extends AppCompatActivity {
             try {
                 bitmap = qrgEncoder.encodeAsBitmap();
                 qrImage.setImageBitmap(bitmap);
-                nameTV.setText(name);
+
             } catch (WriterException e) {
                 Log.v(TAG, e.toString());
             }
         } else {
             Toast.makeText(QRImageActivity.this,"WRONG",Toast.LENGTH_SHORT).show();
-        }
-
+        }*/
+        //saves qr code image to device
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -135,7 +143,7 @@ public class QRImageActivity extends AppCompatActivity {
                         file.delete();
                     try {
                         FileOutputStream out = new FileOutputStream(file);
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
+                        mainBitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
                         out.flush();
                         out.close();
                     }
@@ -191,7 +199,7 @@ public class QRImageActivity extends AppCompatActivity {
 
                 //Bitmap resized = Bitmap.createScaledBitmap(bitmap, (int)(bitmap.getWidth()*.1),(int)(bitmap.getHeight()*.1), true);
                 photoPrinter.setScaleMode(PrintHelper.SCALE_MODE_FIT);
-                photoPrinter.printBitmap("qr code", bitmap);
+                photoPrinter.printBitmap("qr code", mainBitmap);
             }
         });
 
@@ -203,7 +211,8 @@ public class QRImageActivity extends AppCompatActivity {
         });
 
     }
-    private void createPdf(String sometext){
+
+    public void createPdf(String sometext){
         // create a new document
         PdfDocument document = new PdfDocument();
         // crate a page description
@@ -219,7 +228,7 @@ public class QRImageActivity extends AppCompatActivity {
         canvas.drawRect(100, 100, 200, 200, myPaint);
         */
         Rect rect = new Rect(50,50,200,200);
-        canvas.drawBitmap(bitmap,null,rect,null);
+        canvas.drawBitmap(mainBitmap,null,rect,null);
         paint.setColor(Color.BLACK);
         paint.setTextSize(20);
         int xPos = (int)(rect.width() - paint.getTextSize() * name.length() / 2) / 2;
@@ -227,7 +236,7 @@ public class QRImageActivity extends AppCompatActivity {
 
         // finish the page
         document.finishPage(page);
-// draw text on the graphics object of the page
+
         // write the document content
         String directory_path = Environment.getExternalStorageDirectory().getPath() + "/mypdf/";
         File file = new File(directory_path);
@@ -246,4 +255,81 @@ public class QRImageActivity extends AppCompatActivity {
         // close the document
         document.close();
     }
+
+    /*
+    public void createPdf(String sometext){
+        // create a new document
+        PdfDocument document = new PdfDocument();
+        // crate a page description
+        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(595, 842, 1).create();
+        // start a page
+        PdfDocument.Page page = document.startPage(pageInfo);
+        Canvas canvas = page.getCanvas();
+        Paint paint = new Paint();
+/*
+        Paint myPaint = new Paint();
+        myPaint.setColor(Color.rgb(0, 0, 0));
+        myPaint.setStrokeWidth(10);
+        canvas.drawRect(100, 100, 200, 200, myPaint);
+        *//*
+        Rect rect = new Rect(50,50,200,200);
+        canvas.drawBitmap(mainBitmap,null,rect,null);
+        paint.setColor(Color.BLACK);
+        paint.setTextSize(20);
+        int xPos = (int)(rect.width() - paint.getTextSize() * name.length() / 2) / 2;
+        canvas.drawText(name, xPos, 35, paint);
+
+        // finish the page
+        document.finishPage(page);
+
+        // write the document content
+        String directory_path = Environment.getExternalStorageDirectory().getPath() + "/mypdf/";
+        File file = new File(directory_path);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+        String targetPdf = directory_path+ sometext+"_qr"+".pdf";
+        File filePath = new File(targetPdf);
+        try {
+            document.writeTo(new FileOutputStream(filePath));
+            Toast.makeText(this, "Done", Toast.LENGTH_LONG).show();
+        } catch (IOException e) {
+            Log.e("main", "error "+e.toString());
+            Toast.makeText(this, "Something wrong: " + e.toString(),  Toast.LENGTH_LONG).show();
+        }
+        // close the document
+        document.close();
+    }
+    */
+/*
+    public QrCode makeQRCode(String inputValue, Bitmap bitmap){
+        QrCode qrCode = null;
+        if (inputValue.length() > 0) {
+            WindowManager manager = (WindowManager) getSystemService(WINDOW_SERVICE);
+            Display display = manager.getDefaultDisplay();
+            Point point = new Point();
+            display.getSize(point);
+            int width = point.x;
+            int height = point.y;
+            int smallerDimension = width < height ? width : height;
+            smallerDimension = smallerDimension * 3 / 4;
+
+            qrgEncoder = new QRGEncoder(
+                    inputValue, null,
+                    QRGContents.Type.TEXT,
+                    smallerDimension);
+            try {
+                bitmap = qrgEncoder.encodeAsBitmap();
+                qrCode = new QrCode(name,bitmap);
+
+                //qrImage.setImageBitmap(bitmap);
+            } catch (WriterException e) {
+                Log.v(TAG, e.toString());
+
+            }
+        } else {
+            Toast.makeText(QRImageActivity.this,"WRONG",Toast.LENGTH_SHORT).show();
+        }
+        return qrCode;
+    }*/
 }

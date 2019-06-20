@@ -15,11 +15,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
+            android:layout_margin="8dp"
             android:text="name"
             android:textColor="@android:color/black"
             android:textSize="20sp" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -28,17 +28,17 @@
             <ImageView
                 android:id="@+id/image_view_upload"
                 android:layout_width="wrap_content"
-                android:layout_height="200dp"
+                android:layout_height="150dp"
                 android:layout_marginBottom="10dp"
-                android:layout_weight="1"/>
+                android:layout_weight="1" />
 
             <CheckBox
                 android:id="@+id/checkbox"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_weight=".05"
                 android:scaleX="1.5"
-                android:scaleY="1.5"
-                android:layout_weight=".05"/>
+                android:scaleY="1.5" />
 
         </LinearLayout>
 

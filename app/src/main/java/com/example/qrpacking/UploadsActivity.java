@@ -36,6 +36,8 @@ public class UploadsActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.uploadsRecycler);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        //TODO check if this shit does anything
         recyclerView.setItemViewCacheSize(20);
         recyclerView.setDrawingCacheEnabled(true);
 
@@ -43,9 +45,10 @@ public class UploadsActivity extends AppCompatActivity {
 
         uploadsList = new ArrayList<>();
 
+        //gets dbref of upload
         databaseReference = FirebaseDatabase.getInstance().getReference("uploads");
 
-
+        //adds upload from db to arraylist to put into card views/recyclerview
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -56,6 +59,7 @@ public class UploadsActivity extends AppCompatActivity {
 
                 uploadsRecyclerAdapter = new UploadsRecyclerAdapter(UploadsActivity.this, uploadsList);
                 recyclerView.setAdapter(uploadsRecyclerAdapter);
+                //makes progress circle invisible
                 progressCircle.setVisibility(View.INVISIBLE);
             }
 
