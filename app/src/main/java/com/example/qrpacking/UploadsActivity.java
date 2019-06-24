@@ -22,12 +22,14 @@ import java.util.List;
 
 public class UploadsActivity extends AppCompatActivity {
 
+    public final String TAG = "UploadsActivity";
     private RecyclerView recyclerView;
     private UploadsRecyclerAdapter uploadsRecyclerAdapter;
 
     private ProgressBar progressCircle;
     private Button pdfButton;
     private List<QrCode> qrCodeList;
+    private List<Upload> checkedUploadsList;
 
     private DatabaseReference databaseReference;
     private List<Upload> uploadsList;
@@ -48,6 +50,8 @@ public class UploadsActivity extends AppCompatActivity {
         pdfButton = findViewById(R.id.pdf);
 
         uploadsList = new ArrayList<>();
+        checkedUploadsList = new ArrayList<>();
+        qrCodeList = new ArrayList<>();
 
         //gets dbref of upload
         databaseReference = FirebaseDatabase.getInstance().getReference("uploads");
@@ -77,9 +81,18 @@ public class UploadsActivity extends AppCompatActivity {
         pdfButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               qrCodeList = uploadsRecyclerAdapter.getQrCodeList();
-               Pdf pdf = new Pdf(qrCodeList);
-               pdf.createPdf();
+               //puts uploads in qrcodelist
+                checkedUploadsList = uploadsRecyclerAdapter.getCheckedUploadsList();
+                for (int i = 0; i < checkedUploadsList.size(); i++) {
+                    Upload upload = checkedUploadsList.get(i);
+                    QrCode qrCode = new QrCode(upload.getName(),upload.getImageUrl(),UploadsActivity.this);
+                    qrCodeList.add(qrCode);
+                    Log.d(TAG,"ADDED: " + qrCode.getName());
+                }
+
+                //creates pdf
+                Pdf pdf = new Pdf(qrCodeList);
+                pdf.createPdf();
             }
         });
 

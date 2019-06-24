@@ -6,6 +6,7 @@ public class Upload {
     private String name;
     private String imageUrl;
 
+
     public Upload(){
         //empty constructor needed
     }
@@ -41,5 +42,9 @@ public class Upload {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public boolean isSelected(){
+        return
     }
 }
