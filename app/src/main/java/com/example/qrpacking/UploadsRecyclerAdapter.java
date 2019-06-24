@@ -57,7 +57,7 @@ public class UploadsRecyclerAdapter extends RecyclerView.Adapter<UploadsRecycler
                 .fitCenter()
                 .into(imageViewHolder.imageView);
         imageViewHolder.checkBox.setOnCheckedChangeListener(null);
-        imageViewHolder.checkBox.setChecked(uploadCurrent.is);
+        imageViewHolder.checkBox.setChecked(uploadCurrent.isSelected());
 
         imageViewHolder.setItemClickListener(new ItemClickListener() {
             @Override
@@ -65,10 +65,12 @@ public class UploadsRecyclerAdapter extends RecyclerView.Adapter<UploadsRecycler
                 CheckBox chk = (CheckBox) v;
                 if(chk.isChecked()){
                     checkedUploadsList.add(uploadsList.get(pos));
+                    uploadCurrent.setSelected(true);
                     Log.d(TAG,"added: " + uploadsList.get(pos).getName());
                 }
                 else{
                     checkedUploadsList.remove(uploadsList.get(pos));
+                    uploadCurrent.setSelected(false);
                     Log.d(TAG,"removed: " + uploadsList.get(pos).getName());
                 }
             }

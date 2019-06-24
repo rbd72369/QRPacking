@@ -5,7 +5,7 @@ public class Upload {
     private String id;
     private String name;
     private String imageUrl;
-
+    private boolean selected = false;
 
     public Upload(){
         //empty constructor needed
@@ -18,6 +18,7 @@ public class Upload {
         this.id = id;
         this.name = name;
         this.imageUrl = imageUrl;
+        selected = false;
     }
 
     public String getId() {
@@ -44,7 +45,11 @@ public class Upload {
         this.imageUrl = imageUrl;
     }
 
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
+
     public boolean isSelected(){
-        return
+        return selected;
     }
 }
