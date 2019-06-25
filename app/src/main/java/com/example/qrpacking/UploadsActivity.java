@@ -78,10 +78,11 @@ public class UploadsActivity extends AppCompatActivity {
             }
         });
 
+        //creates pdf
         pdfButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               //puts uploads in qrcodelist
+               //puts checked uploads in qrcodelist
                 checkedUploadsList = uploadsRecyclerAdapter.getCheckedUploadsList();
                 for (int i = 0; i < checkedUploadsList.size(); i++) {
                     Upload upload = checkedUploadsList.get(i);
@@ -93,6 +94,10 @@ public class UploadsActivity extends AppCompatActivity {
                 //creates pdf
                 Pdf pdf = new Pdf(qrCodeList);
                 pdf.createPdf();
+                //TODO make pdf open on creation
+                //TODO save in db based on user
+                //TODO add icon
+                Toast.makeText(UploadsActivity.this, "PDF made", Toast.LENGTH_SHORT).show();
             }
         });
 

@@ -30,53 +30,6 @@ public class Pdf {
 
     }
 
-/*
-    public void createPdf(String sometext){
-        // create a new document
-        PdfDocument document = new PdfDocument();
-        // crate a page description
-        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(595, 842, 1).create();
-        // start a page
-        PdfDocument.Page page = document.startPage(pageInfo);
-        Canvas canvas = page.getCanvas();
-        Paint paint = new Paint();
-/*
-        Paint myPaint = new Paint();
-        myPaint.setColor(Color.rgb(0, 0, 0));
-        myPaint.setStrokeWidth(10);
-        canvas.drawRect(100, 100, 200, 200, myPaint);
-        */
-/*
-        Rect rect = new Rect(50,50,200,200);
-        canvas.drawBitmap(mainBitmap,null,rect,null);
-        paint.setColor(Color.BLACK);
-        paint.setTextSize(20);
-        int xPos = (int)(rect.width() - paint.getTextSize() * name.length() / 2) / 2;
-        canvas.drawText(name, xPos, 35, paint);
-
-        // finish the page
-        document.finishPage(page);
-
-        // write the document content
-        String directory_path = Environment.getExternalStorageDirectory().getPath() + "/mypdf/";
-        File file = new File(directory_path);
-        if (!file.exists()) {
-            file.mkdirs();
-        }
-        String targetPdf = directory_path+ sometext+"_qr"+".pdf";
-        File filePath = new File(targetPdf);
-        try {
-            document.writeTo(new FileOutputStream(filePath));
-            Toast.makeText(this, "Done", Toast.LENGTH_LONG).show();
-        } catch (IOException e) {
-            Log.e("main", "error "+e.toString());
-            Toast.makeText(this, "Something wrong: " + e.toString(),  Toast.LENGTH_LONG).show();
-        }
-        // close the document
-        document.close();
-    }*/
-
-
     public void createPdf(){
         int size = qrCodeList.size();
         int numOfPages = (int) Math.ceil((double)size/4);
@@ -159,6 +112,52 @@ public class Pdf {
         }
         // close the document
         document.close();
+
     }
+    /*
+    public void createPdf(String sometext){
+        // create a new document
+        PdfDocument document = new PdfDocument();
+        // crate a page description
+        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(595, 842, 1).create();
+        // start a page
+        PdfDocument.Page page = document.startPage(pageInfo);
+        Canvas canvas = page.getCanvas();
+        Paint paint = new Paint();
+/*
+        Paint myPaint = new Paint();
+        myPaint.setColor(Color.rgb(0, 0, 0));
+        myPaint.setStrokeWidth(10);
+        canvas.drawRect(100, 100, 200, 200, myPaint);
+        */
+/*
+        Rect rect = new Rect(50,50,200,200);
+        canvas.drawBitmap(mainBitmap,null,rect,null);
+        paint.setColor(Color.BLACK);
+        paint.setTextSize(20);
+        int xPos = (int)(rect.width() - paint.getTextSize() * name.length() / 2) / 2;
+        canvas.drawText(name, xPos, 35, paint);
+
+        // finish the page
+        document.finishPage(page);
+
+        // write the document content
+        String directory_path = Environment.getExternalStorageDirectory().getPath() + "/mypdf/";
+        File file = new File(directory_path);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+        String targetPdf = directory_path+ sometext+"_qr"+".pdf";
+        File filePath = new File(targetPdf);
+        try {
+            document.writeTo(new FileOutputStream(filePath));
+            Toast.makeText(this, "Done", Toast.LENGTH_LONG).show();
+        } catch (IOException e) {
+            Log.e("main", "error "+e.toString());
+            Toast.makeText(this, "Something wrong: " + e.toString(),  Toast.LENGTH_LONG).show();
+        }
+        // close the document
+        document.close();
+    }*/
 
 }
