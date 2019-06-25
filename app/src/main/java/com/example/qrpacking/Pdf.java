@@ -96,8 +96,9 @@ public class Pdf {
         Paint paint;
         Bitmap mainBitmap = null;
         String name = null;
+
+        //creates certain number of pdf pages depending on how many qr codes are selected
         for (int i = 0; i < numOfPages; i++) {
-            // create a new document
 
             // crate a page description
             pageInfo = new PdfDocument.PageInfo.Builder(595, 842, i).create();
@@ -106,12 +107,16 @@ public class Pdf {
             canvas = page.getCanvas();
             paint = new Paint();
 
+            //if adding qr codes to the last page and the last page has less than 4 qr codes
+            //then size = the number of qr codes to be printed to the page
+            //else size = the maximum number of qr codes that the page can hold
             if(numOfPages == i+1 && !isRound){
                 size = qrCodeList.size() % 4;
             }
             else {
                 size = 4;
             }
+            //count helps to space the qr codes
             int count = 0;
 
             for (int j = 4*i; j < 4*i+size; j++) {
@@ -120,14 +125,15 @@ public class Pdf {
                 mainBitmap = qrCode.getQrImage();
                 name = qrCode.getName();
 
-               // qrCodeList.remove(0);
-
+                //draws qrcode inside a rect
                 Rect rect = new Rect(50,50 + (200 * count),200,200 + (200 * count));
                 canvas.drawBitmap(mainBitmap,null,rect,null);
                 paint.setColor(Color.BLACK);
                 paint.setTextSize(20);
-                int xPos = (int)(rect.width() - paint.getTextSize() * name.length() / 2) / 2;
+                int xPos = (int)(rect.width() - paint.getTextSize() * name.length() / 2) / 2;//TODO this is wack
+                //draws the name
                 canvas.drawText(name, xPos, 35 + (200*count), paint);
+
                 Log.d(TAG, "j: " +j);
                 count ++;
             }
@@ -136,15 +142,13 @@ public class Pdf {
             document.finishPage(page);
         }
 
-
-
         // write the document content
         String directory_path = Environment.getExternalStorageDirectory().getPath() + "/mypdf/";
         File file = new File(directory_path);
         if (!file.exists()) {
             file.mkdirs();
         }
-        String targetPdf = directory_path+ name+"_qr"+".pdf";
+        String targetPdf = directory_path+ System.currentTimeMillis()+"_qrCodes"+".pdf";
         File filePath = new File(targetPdf);
         try {
             document.writeTo(new FileOutputStream(filePath));
