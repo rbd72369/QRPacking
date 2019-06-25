@@ -17,6 +17,8 @@ import java.util.List;
 
 public class Pdf {
 
+    public final String TAG = "PDF";
+
     private List<QrCode> qrCodeList;
 
     public Pdf(){
@@ -76,41 +78,65 @@ public class Pdf {
 
 
     public void createPdf(){
+        int size = qrCodeList.size();
+        int numOfPages = (int) Math.ceil((double)size/4);
+        Log.d(TAG, "list size: " + size);
+        Log.d(TAG, "numofpages: " + numOfPages);
+
+        boolean isRound = false;
+        if(qrCodeList.size()%4==0) isRound = true;
+
         // create a new document
         PdfDocument document = new PdfDocument();
         // crate a page description
-        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(595, 842, 1).create();
+        PdfDocument.PageInfo pageInfo = null;
         // start a page
-        PdfDocument.Page page = document.startPage(pageInfo);
-        Canvas canvas = page.getCanvas();
-        Paint paint = new Paint();
-
-
+        PdfDocument.Page page = null;
+        Canvas canvas;
+        Paint paint;
         Bitmap mainBitmap = null;
         String name = null;
-        for (int i = 0; i < qrCodeList.size() ; i++) {
-            QrCode qrCode = qrCodeList.get(i);
-            mainBitmap = qrCode.getQrImage();
-            name = qrCode.getName();
+        for (int i = 0; i < numOfPages; i++) {
+            // create a new document
 
-            Rect rect = new Rect(50,50 + (200 * i),200,200 + (200 * i));
-            canvas.drawBitmap(mainBitmap,null,rect,null);
-            paint.setColor(Color.BLACK);
-            paint.setTextSize(20);
-            int xPos = (int)(rect.width() - paint.getTextSize() * name.length() / 2) / 2;
-            canvas.drawText(name, xPos, 35 + (200*i), paint);
+            // crate a page description
+            pageInfo = new PdfDocument.PageInfo.Builder(595, 842, i).create();
+            // start a page
+            page = document.startPage(pageInfo);
+            canvas = page.getCanvas();
+            paint = new Paint();
+
+            if(numOfPages == i+1 && !isRound){
+                size = qrCodeList.size() % 4;
+            }
+            else {
+                size = 4;
+            }
+            int count = 0;
+
+            for (int j = 4*i; j < 4*i+size; j++) {
+                QrCode qrCode = qrCodeList.get(j);
+                Log.d(TAG, "name: " + qrCode.getName());
+                mainBitmap = qrCode.getQrImage();
+                name = qrCode.getName();
+
+               // qrCodeList.remove(0);
+
+                Rect rect = new Rect(50,50 + (200 * count),200,200 + (200 * count));
+                canvas.drawBitmap(mainBitmap,null,rect,null);
+                paint.setColor(Color.BLACK);
+                paint.setTextSize(20);
+                int xPos = (int)(rect.width() - paint.getTextSize() * name.length() / 2) / 2;
+                canvas.drawText(name, xPos, 35 + (200*count), paint);
+                Log.d(TAG, "j: " +j);
+                count ++;
+            }
+            Log.d(TAG, "size: " + (4*i+size) );
+            // finish the page
+            document.finishPage(page);
         }
-/*
-        Rect rect = new Rect(50,50,200,200);
-        canvas.drawBitmap(mainBitmap,null,rect,null);
-        paint.setColor(Color.BLACK);
-        paint.setTextSize(20);
-        int xPos = (int)(rect.width() - paint.getTextSize() * name.length() / 2) / 2;
-        canvas.drawText(name, xPos, 35, paint);
-*/
 
-        // finish the page
-        document.finishPage(page);
+
 
         // write the document content
         String directory_path = Environment.getExternalStorageDirectory().getPath() + "/mypdf/";
