@@ -127,19 +127,36 @@ public class UploadsActivity extends AppCompatActivity {
         deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //confirm delete action
-                AlertDialog dialog = new AlertDialog.Builder(UploadsActivity.this)
-                        .setTitle("Are you sure you want to delete?")
-                        .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                //delete images
-                                deleteImages();
-                            }
-                        })
-                        .setNegativeButton("Cancel", null)
-                        .create();
-                dialog.show();
+                checkedUploadsList = uploadsRecyclerAdapter.getCheckedUploadsList();
+                String endString;
+
+                if(checkedUploadsList.size() == 1){
+                    endString = " image";
+                }
+                else {
+                    endString = " images";
+                }
+                //check that images are checked
+                if(checkedUploadsList.size() != 0){
+                    //confirm delete action
+                    AlertDialog dialog = new AlertDialog.Builder(UploadsActivity.this)
+                            .setTitle("Are you sure you want to delete " + checkedUploadsList.size() + endString + "?")
+                            .setMessage(" This permanently deletes" + endString + " from database")
+                            .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    //delete images
+                                    deleteImages();
+                                }
+                            })
+                            .setNegativeButton("Cancel", null)
+                            .create();
+                    dialog.show();
+                }
+                else {
+                    Toast.makeText(UploadsActivity.this, "No images selected", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
 
@@ -149,7 +166,7 @@ public class UploadsActivity extends AppCompatActivity {
      * removes checked images from storage and db
      */
     public void deleteImages() {
-        checkedUploadsList = uploadsRecyclerAdapter.getCheckedUploadsList();
+        //checkedUploadsList = uploadsRecyclerAdapter.getCheckedUploadsList();
 
         for (int i = 0; i < checkedUploadsList.size(); i++) {
             final Upload upload = checkedUploadsList.get(i);
@@ -166,10 +183,11 @@ public class UploadsActivity extends AppCompatActivity {
                 @Override
                 public void onFailure(@NonNull Exception e) {
                     //todo why is this called???
-                    //Toast.makeText(UploadsActivity.this, "ERROR! Images not deleted", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(UploadsActivity.this, "ERROR! Images not deleted", Toast.LENGTH_SHORT).show();
                 }
             });
         }
+        checkedUploadsList.clear();
         Toast.makeText(this, "Images Deleted", Toast.LENGTH_SHORT).show();
     }
 
