@@ -51,6 +51,7 @@ public class AddBoxActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_box);
+        getSupportActionBar().setTitle("Upload Image");
 
         chooseImageBtn = findViewById(R.id.chooseImageBtn);
         uploadBtn = findViewById(R.id.uploadBtn);
@@ -75,6 +76,9 @@ public class AddBoxActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * opens the image viewer so that user can choose image
+     */
     private void openFileChooser() {
         Intent intent = new Intent();
         intent.setType("image/*");
@@ -85,7 +89,7 @@ public class AddBoxActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
+        //gets image that user chose
         if(requestCode == PICK_IMAGE_REQ && resultCode == RESULT_OK
             && data!=null && data.getData()!=null){
             imageURI = data.getData();
@@ -100,6 +104,9 @@ public class AddBoxActivity extends AppCompatActivity {
         return  mime.getExtensionFromMimeType(contentResolver.getType(uri));
     }
 
+    /**
+     * uploads image to db and storage
+     */
     public void uploadFile(){
         String imageName;
         if(fileNameET.getText().toString().trim().equals("")){
@@ -191,6 +198,9 @@ public class AddBoxActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
+            case R.id.chooseFile:
+                startActivity(new Intent(this, AddBoxActivity.class));
+                return true;
             case R.id.uploads:
                 startActivity(new Intent(this, UploadsActivity.class));
                 return true;

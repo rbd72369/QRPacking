@@ -78,6 +78,10 @@ public class UploadsRecyclerAdapter extends RecyclerView.Adapter<UploadsRecycler
 
     }
 
+    /**
+     * gets the checkedUploadsList
+     * @return checkedUploadsList
+     */
     public List<Upload> getCheckedUploadsList(){
         return checkedUploadsList;
     }

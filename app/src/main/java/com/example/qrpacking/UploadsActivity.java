@@ -26,7 +26,7 @@ import com.google.firebase.storage.StorageReference;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UploadsActivity extends AppCompatActivity {
+public class UploadsActivity extends AddBoxActivity {
 
     public final String TAG = "UploadsActivity";
     private RecyclerView recyclerView;
@@ -48,6 +48,8 @@ public class UploadsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_uploads);
+
+        getSupportActionBar().setTitle("Uploads");
 
         recyclerView = findViewById(R.id.uploadsRecycler);
         recyclerView.setHasFixedSize(true);
@@ -182,11 +184,11 @@ public class UploadsActivity extends AppCompatActivity {
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    //todo why is this called???
                     Toast.makeText(UploadsActivity.this, "ERROR! Images not deleted", Toast.LENGTH_SHORT).show();
                 }
             });
         }
+        //clear list
         checkedUploadsList.clear();
         Toast.makeText(this, "Images Deleted", Toast.LENGTH_SHORT).show();
     }
