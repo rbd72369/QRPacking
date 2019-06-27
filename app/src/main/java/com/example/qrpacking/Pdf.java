@@ -12,6 +12,9 @@ import android.graphics.pdf.PdfDocument;
 import android.net.Uri;
 import android.os.Environment;
 import android.support.v4.content.FileProvider;
+import android.text.Layout;
+import android.text.StaticLayout;
+import android.text.TextPaint;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -75,6 +78,8 @@ public class Pdf {
         Bitmap mainBitmap = null;
         String name = null;
 
+
+
         //creates certain number of pdf pages depending on how many qr codes are selected
         for (int i = 0; i < numOfPages; i++) {
 
@@ -84,6 +89,10 @@ public class Pdf {
             page = document.startPage(pageInfo);
             canvas = page.getCanvas();
             paint = new Paint();
+            TextPaint textPaint = new TextPaint();
+            //StaticLayout staticLayout = StaticLayout.Builder
+              //      .obtain(name,60,595,textPaint,canvas.getWidth());
+
 
             //if adding qr codes to the last page and the last page has less than 4 qr codes
             //then size = the number of qr codes to be printed to the page
@@ -102,15 +111,25 @@ public class Pdf {
                 Log.d(TAG, "name: " + qrCode.getName());
                 mainBitmap = qrCode.getQrImage();
                 name = qrCode.getName();
+                textPaint.setTextSize(20);
+
 
                 //draws qrcode inside a rect
                 Rect rect = new Rect(50,50 + (200 * count),200,200 + (200 * count));
                 canvas.drawBitmap(mainBitmap,null,rect,null);
                 paint.setColor(Color.BLACK);
                 paint.setTextSize(20);
-                int xPos = (int)(rect.width() - paint.getTextSize() * name.length() / 2) / 2;//TODO this is wack
+                //int xPos = (int)(rect.width() - paint.getTextSize() * name.length() / 2) / 2;//TODO this is wack
+                paint.setTextAlign(Paint.Align.CENTER);
                 //draws the name
-                canvas.drawText(name, xPos, 35 + (200*count), paint);
+                //canvas.drawText(name, 60, 35 + (200*count), paint);
+                StaticLayout staticLayout = new StaticLayout(name,textPaint,canvas.getWidth() - 250, Layout.Alignment.ALIGN_NORMAL, 1.0f,0.0f,false);
+                canvas.save();
+                canvas.translate(220,35 + (200*count));
+                //TODO what is deprecated?
+
+                staticLayout.draw(canvas);
+                canvas.restore();
 
                 Log.d(TAG, "j: " +j);
                 count ++;
