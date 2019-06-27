@@ -1,10 +1,13 @@
 package com.example.qrpacking;
 
 import android.content.ContentResolver;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -63,17 +66,44 @@ public class AddBoxActivity extends AppCompatActivity {
         chooseImageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openFileChooser();
+                AlertDialog dialog = new AlertDialog.Builder(AddBoxActivity.this)
+                        .setTitle("Choose source")
+                        .setPositiveButton("Camera", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                openCamera();
+
+                            }
+                        })
+                        .setNegativeButton("Gallery", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                openFileChooser();
+                            }
+                        })
+                        .create();
+                dialog.show();
             }
         });
 
         uploadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                uploadFile();
+                if(imageURI!=null){
+                    uploadFile();
+                }
+                else{
+                    Toast.makeText(AddBoxActivity.this, "Choose image", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
 
+    }
+
+    private  void openCamera(){
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(intent, 0);
     }
 
     /**
@@ -82,7 +112,10 @@ public class AddBoxActivity extends AppCompatActivity {
     private void openFileChooser() {
         Intent intent = new Intent();
         intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
+        //intent.setAction(Intent.ACTION_GET_CONTENT);
+        intent.setAction(Intent.ACTION_PICK);
+        //intent.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
         startActivityForResult(intent, PICK_IMAGE_REQ);
     }
 
@@ -90,12 +123,28 @@ public class AddBoxActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         //gets image that user chose
-        if(requestCode == PICK_IMAGE_REQ && resultCode == RESULT_OK
+        switch (requestCode){
+            case 0:
+                if(resultCode == RESULT_OK){
+                    imageURI = data.getData();
+                    imageView.setImageURI(imageURI);
+                    Toast.makeText(this, "image set", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case 1:
+                if ((resultCode == RESULT_OK)){
+                    imageURI = data.getData();
+                    imageView.setImageURI(imageURI);
+                    Toast.makeText(this, "image set", Toast.LENGTH_SHORT).show();
+                }
+                break;
+        }
+        /*if(requestCode == PICK_IMAGE_REQ && resultCode == RESULT_OK
             && data!=null && data.getData()!=null){
             imageURI = data.getData();
 
             imageView.setImageURI(imageURI);
-        }
+        }*/
     }
 
     private String getFileExtension(Uri uri){

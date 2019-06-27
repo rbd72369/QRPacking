@@ -1,7 +1,18 @@
 package com.example.qrpacking;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.net.Uri;
+import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -23,6 +34,10 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -115,14 +130,14 @@ public class UploadsActivity extends AddBoxActivity {
 
                     //creates pdf
                     Pdf pdf = new Pdf(qrCodeList);
-                    pdf.createPdf();
-                    //TODO make pdf open on creation
+                    pdf.openPdf(getApplicationContext());
                     //TODO save in db based on user
 
                     Toast.makeText(UploadsActivity.this, "PDF made", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(UploadsActivity.this, "No images selected", Toast.LENGTH_SHORT).show();
                 }
+                checkedUploadsList.clear();
             }
         });
 
@@ -132,14 +147,13 @@ public class UploadsActivity extends AddBoxActivity {
                 checkedUploadsList = uploadsRecyclerAdapter.getCheckedUploadsList();
                 String endString;
 
-                if(checkedUploadsList.size() == 1){
+                if (checkedUploadsList.size() == 1) {
                     endString = " image";
-                }
-                else {
+                } else {
                     endString = " images";
                 }
                 //check that images are checked
-                if(checkedUploadsList.size() != 0){
+                if (checkedUploadsList.size() != 0) {
                     //confirm delete action
                     AlertDialog dialog = new AlertDialog.Builder(UploadsActivity.this)
                             .setTitle("Are you sure you want to delete " + checkedUploadsList.size() + endString + "?")
@@ -154,14 +168,11 @@ public class UploadsActivity extends AddBoxActivity {
                             .setNegativeButton("Cancel", null)
                             .create();
                     dialog.show();
-                }
-                else {
+                } else {
                     Toast.makeText(UploadsActivity.this, "No images selected", Toast.LENGTH_SHORT).show();
                 }
-
             }
         });
-
     }
 
     /**
@@ -192,6 +203,8 @@ public class UploadsActivity extends AddBoxActivity {
         checkedUploadsList.clear();
         Toast.makeText(this, "Images Deleted", Toast.LENGTH_SHORT).show();
     }
+
+
 
     @Override
     protected void onDestroy() {

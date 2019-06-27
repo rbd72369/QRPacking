@@ -1,25 +1,32 @@
 package com.example.qrpacking;
 
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.pdf.PdfDocument;
+import android.net.Uri;
 import android.os.Environment;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Pdf {
 
     public final String TAG = "PDF";
 
-    private List<QrCode> qrCodeList;
+    private List<QrCode> qrCodeList = new ArrayList<>();
+    private String uri;
 
     public Pdf(){
 
@@ -27,11 +34,29 @@ public class Pdf {
 
     public Pdf(List<QrCode> qrCodeList){
         this.qrCodeList = qrCodeList;
+        uri = null;
+        createPdf();
 
     }
 
+    public Pdf(QrCode qrCode){
+        qrCodeList.add(qrCode);
+        createPdf();
+    }
+
+    public Pdf(String uri){
+        this.uri = uri;
+
+    }
+
+    /**
+     * creates the pdf
+     */
     public void createPdf(){
         int size = qrCodeList.size();
+        if(size==0){
+            //qrCodeList
+        }
         int numOfPages = (int) Math.ceil((double)size/4);
         Log.d(TAG, "list size: " + size);
         Log.d(TAG, "numofpages: " + numOfPages);
@@ -102,6 +127,7 @@ public class Pdf {
             file.mkdirs();
         }
         String targetPdf = directory_path+ System.currentTimeMillis()+"_qrCodes"+".pdf";
+        uri = targetPdf;
         File filePath = new File(targetPdf);
         try {
             document.writeTo(new FileOutputStream(filePath));
@@ -113,6 +139,31 @@ public class Pdf {
         // close the document
         document.close();
 
+    }
+    /**
+     * opens pdf
+     * @param context the context
+     */
+    public void openPdf(Context context) {
+
+        try {
+            File file = new File(uri);
+            Uri pdfUri = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".provider", file);
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setDataAndType(pdfUri, "application/pdf");
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
+
+            //use the flag FLAG_UPDATE_CURRENT to override any notification already there
+            PendingIntent contentIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        } catch (OutOfMemoryError e) {
+            e.printStackTrace();
+        } catch (IllegalAccessError e) {
+            e.printStackTrace();
+        }
     }
     /*
     public void createPdf(String sometext){
@@ -160,4 +211,11 @@ public class Pdf {
         document.close();
     }*/
 
+    public String getUri() {
+        return uri;
+    }
+
+    public void setUri(String uri) {
+        this.uri = uri;
+    }
 }
