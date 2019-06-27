@@ -21,7 +21,9 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -74,6 +76,11 @@ public class UploadsActivity extends AddBoxActivity {
         //recyclerView.setItemViewCacheSize(20);
         //recyclerView.setDrawingCacheEnabled(true);
 
+        //most recent uploads first
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,true);
+        layoutManager.setStackFromEnd(true);
+        recyclerView.setLayoutManager(layoutManager);
+
         progressCircle = findViewById(R.id.progressCirc);
         pdfButton = findViewById(R.id.pdf);
         deleteBtn = findViewById(R.id.deleteBtn);
@@ -120,6 +127,8 @@ public class UploadsActivity extends AddBoxActivity {
             public void onClick(View v) {
                 //puts checked uploads in qrcodelist
                 checkedUploadsList = uploadsRecyclerAdapter.getCheckedUploadsList();
+
+               //TODO uncheckboxes
                 if (checkedUploadsList.size() != 0) {
                     for (int i = 0; i < checkedUploadsList.size(); i++) {
                         Upload upload = checkedUploadsList.get(i);
@@ -138,6 +147,7 @@ public class UploadsActivity extends AddBoxActivity {
                     Toast.makeText(UploadsActivity.this, "No images selected", Toast.LENGTH_SHORT).show();
                 }
                 checkedUploadsList.clear();
+
             }
         });
 
