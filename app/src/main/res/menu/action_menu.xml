@@ -10,6 +10,9 @@
         android:title=""
         android:icon="@drawable/ic_uploads"
         app:showAsAction="always"/>
+    <item android:id="@+id/accountIcon"
+        android:title="Account"
+        app:showAsAction="never"/>
     <item android:id="@+id/logout"
         android:title="Logout"
         app:showAsAction="never"/>

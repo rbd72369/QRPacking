@@ -257,6 +257,9 @@ public class AddBoxActivity extends AppCompatActivity {
             case R.id.uploads:
                 startActivity(new Intent(this, UploadsActivity.class));
                 return true;
+            case R.id.accountIcon:
+                startActivity(new Intent(this, AccountActivity.class));
+                return true;
             case R.id.logout:
                 FirebaseAuth.getInstance().signOut();
                 startActivity(new Intent(this, MainActivity.class));
