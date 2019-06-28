@@ -57,16 +57,12 @@ public class Pdf {
      */
     public void createPdf(){
         int size = qrCodeList.size();
-        if(size==0){
-            //qrCodeList
-        }
         int numOfPages = (int) Math.ceil((double)size/4);
-        Log.d(TAG, "list size: " + size);
-        Log.d(TAG, "numofpages: " + numOfPages);
 
         boolean isRound = false;
-        if(qrCodeList.size()%4==0) isRound = true;
-
+        if(qrCodeList.size()%4==0){
+            isRound = true;
+        }
         // create a new document
         PdfDocument document = new PdfDocument();
         // crate a page description
@@ -79,8 +75,6 @@ public class Pdf {
         String name = null;
         TextPaint textPaint;
 
-
-
         //creates certain number of pdf pages depending on how many qr codes are selected
         for (int i = 0; i < numOfPages; i++) {
 
@@ -90,9 +84,6 @@ public class Pdf {
             page = document.startPage(pageInfo);
             canvas = page.getCanvas();
             textPaint = new TextPaint();
-            //StaticLayout staticLayout = StaticLayout.Builder
-              //      .obtain(name,60,595,textPaint,canvas.getWidth());
-
 
             //if adding qr codes to the last page and the last page has less than 4 qr codes
             //then size = the number of qr codes to be printed to the page

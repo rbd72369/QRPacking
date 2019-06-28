@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -32,8 +33,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
         if (user != null) {
             // User is signed in
+            //Log.d("USER", user.getDisplayName());
             Intent i = new Intent(this, AddBoxActivity.class);
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(i);
@@ -112,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<AuthResult> task) {
 
                             if(task.isSuccessful()){
-                                startActivity(new Intent(MainActivity.this,CreateUserActivity.class)
+                                startActivity(new Intent(MainActivity.this,AddBoxActivity.class)
                                         .putExtra("email",email));
                             }else{
                                 Toast.makeText(MainActivity.this,"Create failed", Toast.LENGTH_LONG).show();

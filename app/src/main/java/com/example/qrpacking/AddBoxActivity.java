@@ -28,6 +28,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -56,13 +57,16 @@ public class AddBoxActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_box);
         getSupportActionBar().setTitle("Upload Image");
 
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        Log.d("USER", user.getEmail());
+
         chooseImageBtn = findViewById(R.id.chooseImageBtn);
         uploadBtn = findViewById(R.id.uploadBtn);
         imageView = findViewById(R.id.imageView);
         fileNameET = findViewById(R.id.fileNameET);
 
-        storageReference = FirebaseStorage.getInstance().getReference("uploads");
-        databaseReference = FirebaseDatabase.getInstance().getReference("uploads");
+        storageReference = FirebaseStorage.getInstance().getReference(user.getUid()+"/uploads");
+        databaseReference = FirebaseDatabase.getInstance().getReference(user.getUid()+"/uploads");
         chooseImageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
