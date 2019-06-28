@@ -77,6 +77,7 @@ public class Pdf {
         Paint paint;
         Bitmap mainBitmap = null;
         String name = null;
+        TextPaint textPaint;
 
 
 
@@ -88,8 +89,7 @@ public class Pdf {
             // start a page
             page = document.startPage(pageInfo);
             canvas = page.getCanvas();
-            paint = new Paint();
-            TextPaint textPaint = new TextPaint();
+            textPaint = new TextPaint();
             //StaticLayout staticLayout = StaticLayout.Builder
               //      .obtain(name,60,595,textPaint,canvas.getWidth());
 
@@ -112,22 +112,18 @@ public class Pdf {
                 mainBitmap = qrCode.getQrImage();
                 name = qrCode.getName();
                 textPaint.setTextSize(20);
-
+                textPaint.setColor(Color.BLACK);
 
                 //draws qrcode inside a rect
                 Rect rect = new Rect(50,50 + (200 * count),200,200 + (200 * count));
                 canvas.drawBitmap(mainBitmap,null,rect,null);
-                paint.setColor(Color.BLACK);
-                paint.setTextSize(20);
-                //int xPos = (int)(rect.width() - paint.getTextSize() * name.length() / 2) / 2;//TODO this is wack
-                paint.setTextAlign(Paint.Align.CENTER);
-                //draws the name
-                //canvas.drawText(name, 60, 35 + (200*count), paint);
-                StaticLayout staticLayout = new StaticLayout(name,textPaint,canvas.getWidth() - 250, Layout.Alignment.ALIGN_NORMAL, 1.0f,0.0f,false);
+                //writes multiline description to pdf
+                StaticLayout.Builder builder = StaticLayout.Builder.obtain(name, 0, name.length(), textPaint, canvas.getWidth()-250)
+                        .setAlignment(Layout.Alignment.ALIGN_NORMAL)
+                        .setMaxLines(5);
+                StaticLayout staticLayout = builder.build();
                 canvas.save();
                 canvas.translate(220,35 + (200*count));
-                //TODO what is deprecated?
-
                 staticLayout.draw(canvas);
                 canvas.restore();
 
