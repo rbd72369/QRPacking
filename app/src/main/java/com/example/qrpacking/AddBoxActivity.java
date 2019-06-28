@@ -58,7 +58,7 @@ public class AddBoxActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("Upload Image");
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        Log.d("USER", user.getEmail());
+
 
         chooseImageBtn = findViewById(R.id.chooseImageBtn);
         uploadBtn = findViewById(R.id.uploadBtn);

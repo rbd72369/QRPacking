@@ -26,23 +26,21 @@ public class MainActivity extends AppCompatActivity {
     private Button createBtn;
 
     private FirebaseAuth mAuth;
+    private FirebaseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        user = FirebaseAuth.getInstance().getCurrentUser();
 
-        if (user != null) {
+        if (user != null && user.isEmailVerified()) {
             // User is signed in
             //Log.d("USER", user.getDisplayName());
             Intent i = new Intent(this, AddBoxActivity.class);
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(i);
-        } else {
-            // User is signed out
-            //Log.d(TAG, "onAuthStateChanged:signed_out");
         }
         mAuth = FirebaseAuth.getInstance();
 
@@ -81,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
     private void signIn(){
         String email = emailField.getText().toString();
         String password = passwordField.getText().toString();
+        user = mAuth.getCurrentUser();
         if(TextUtils.isEmpty(email) || TextUtils.isEmpty(password)){
             Toast.makeText(MainActivity.this,"Fill in fields", Toast.LENGTH_LONG).show();
         }
@@ -89,9 +88,13 @@ public class MainActivity extends AppCompatActivity {
                     .addOnCompleteListener(MainActivity.this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
+                            user = mAuth.getCurrentUser();
                             if(!task.isSuccessful()){
                                 Toast.makeText(MainActivity.this, "Authentication failed.",
                                         Toast.LENGTH_SHORT).show();
+                            }
+                            else if(!user.isEmailVerified()){
+                                startActivity(new Intent(MainActivity.this,VerifyEmailActivity.class));
                             }
                             else{
                                 startActivity(new Intent(MainActivity.this, AddBoxActivity.class));
@@ -113,9 +116,10 @@ public class MainActivity extends AppCompatActivity {
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
-
+                            user = FirebaseAuth.getInstance().getCurrentUser();
                             if(task.isSuccessful()){
-                                startActivity(new Intent(MainActivity.this,AddBoxActivity.class)
+                                user.sendEmailVerification();
+                                startActivity(new Intent(MainActivity.this,VerifyEmailActivity.class)
                                         .putExtra("email",email));
                             }else{
                                 Toast.makeText(MainActivity.this,"Create failed", Toast.LENGTH_LONG).show();
