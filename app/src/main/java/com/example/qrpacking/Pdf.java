@@ -120,7 +120,7 @@ public class Pdf {
                 //writes multiline description to pdf
                 StaticLayout.Builder builder = StaticLayout.Builder.obtain(name, 0, name.length(), textPaint, canvas.getWidth()-250)
                         .setAlignment(Layout.Alignment.ALIGN_NORMAL)
-                        .setMaxLines(5);
+                        .setMaxLines(6);
                 StaticLayout staticLayout = builder.build();
                 canvas.save();
                 canvas.translate(220,35 + (200*count));
