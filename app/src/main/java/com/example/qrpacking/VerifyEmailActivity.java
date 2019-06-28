@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -41,8 +42,7 @@ public class VerifyEmailActivity extends AppCompatActivity {
                     i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(i);
                 } else {
-                    // User is signed out
-                    //Log.d(TAG, "onAuthStateChanged:signed_out");
+                    Toast.makeText(VerifyEmailActivity.this, "Email not verified", Toast.LENGTH_SHORT).show();
                 }
             }
         });
