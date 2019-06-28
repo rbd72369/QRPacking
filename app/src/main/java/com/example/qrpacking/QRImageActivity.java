@@ -196,6 +196,8 @@ public class QRImageActivity extends AddBoxActivity {
                 photoPrinter.printBitmap("qr code", mainBitmap);
             }
         });
+
+        /*
         //creates pdf of qr code
         pdfBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -205,6 +207,7 @@ public class QRImageActivity extends AddBoxActivity {
                 pdf.openPdf(getApplicationContext());
             }
         });
+        */
 
     }
 }

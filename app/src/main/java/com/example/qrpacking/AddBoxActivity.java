@@ -165,7 +165,10 @@ public class AddBoxActivity extends AppCompatActivity {
         if(fileNameET.getText().toString().trim().equals("")){
             imageName = "No Name";
         }
-        else imageName = fileNameET.getText().toString().trim();
+        else {
+            imageName = fileNameET.getText().toString().trim();
+        }
+        //replaces " " with "_" for the file names
         String imageEndText = imageName.replaceAll(" ", "_");
 
         final String imgName = imageName;
